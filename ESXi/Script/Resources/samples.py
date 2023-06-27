@@ -13,6 +13,7 @@ TYPES = {
     "centos7": ["terraform/centos7.tf", "../Vagrant/resources/guacamole/centos7Sample.xml"],
     "debian11": ["terraform/debian11.tf", "../Vagrant/resources/guacamole/debian11Sample.xml"],
     "centos9": ["terraform/centos9.tf", "../Vagrant/resources/guacamole/centos9Sample.xml"],
+    "win11": ["terraform/win11Sample.tf", "../Vagrant/resources/guacamole/win11Sample.xml"], 
 }
 
 ROLES = {# chaque role correspond à une fonctionnalité
@@ -29,6 +30,7 @@ ROLES = {# chaque role correspond à une fonctionnalité
     "centos7": ["centos7Sample.yml"],
     "debian11": ["debian11Sample.yml"],
     "centos9": ["centos9Sample.yml"],
+    "win11": ["win11Sample.yml"],
 
     # Fonctionnalités liées à l'AD
     "joinDomain": ["joinDomainSample.yml"],

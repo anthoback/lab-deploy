@@ -1,0 +1,94 @@
+---
+
+- name: Activate windows
+  win_shell: cscript slmgr.vbs /rearm
+  args:
+    chdir: C:\Windows\System32\
+
+- name: Reboot
+  win_reboot:
+
+- name: Hostname -> <name>
+  win_hostname:
+    name: <name>
+
+- name: Reboot
+  win_reboot:
+
+- name: Set HostOnly IP Address
+  win_shell: "If (-not(get-netipaddress | where {$_.IPAddress -eq '<HostOnlyIP>'})) {$adapter = (get-netadapter | where {$_.MacAddress -eq '<MACAdressHostOnly>'}).Name; New-NetIPAddress –InterfaceAlias $adapter –AddressFamily IPv4 -IPAddress <HostOnlyIP> –PrefixLength 24 -DefaultGateway <gateway> } Else { Write-Host 'IP Address Already Created.' }"
+
+- name: Set HostOnly DNS Address
+  win_shell: "$adapter = (get-netadapter | where {$_.MacAddress -eq '<MACAdressHostOnly>'}).Name; Set-DnsClientServerAddress -InterfaceAlias $adapter -ServerAddresses <gateway>,<gateway>"
+
+- name: Creating NetConf Backup Script
+  win_shell: Add-Content -Path C:\Users\vagrant\Desktop\NetTrouble.ps1 -Value 'netsh interface ipv4 set address name="Ethernet1" static <HostOnlyIP> mask=255.255.255.0 gateway=<gateway>'
+
+- name: Creating NetConf Backup Script part 2
+  win_shell: Add-Content -Path C:\Users\vagrant\Desktop\NetTrouble.ps1 -Value 'Set-DNSClientServerAddress -InterfaceAlias "Ethernet1" -ServerAddresses ("<gateway>", "<DNSServer>")'
+
+- name: Creating NetConf Backup Script part 3
+  win_shell: Add-Content -Path C:\Users\vagrant\Desktop\NetTrouble.ps1 -Value 'Set-NetConnectionProfile -Name "Réseau 3" -NetworkCategory private'
+
+- name : Download Installer from master
+  win_copy : 
+    src: ~/Tools/gitWin64.exe
+    dest: C:\gitWin64.exe
+
+- name: Install git
+  win_shell: .\gitWin64.exe /SILENT 
+  args:
+    chdir: 'c:\'
+  register: git
+
+- debug: msg="{{ git.stdout }}"
+
+- name: "Set the TimeZone"
+  win_timezone:
+    timezone: "Romance Standard Time"
+
+#Sysmon
+
+- name: Create directory sysmon
+  ansible.windows.win_file:
+    path: C:\sysmon
+    state: directory
+
+- name : Download Sysmon64 from master
+  win_copy : 
+    src: ~/Tools/Sysmon/Sysmon64.exe
+    dest: C:\sysmon\Sysmon64.exe
+
+
+- name : Download sysmonconfig from master
+  win_copy : 
+    src: ~/Tools/Sysmon/sysmonconfig-export-block.xml
+    dest: C:\sysmon\sysmonconfig-export-block.xml
+
+- name: Install sysmon64
+  win_shell: C:\sysmon\Sysmon64.exe -accepteula -i C:\sysmon\sysmonconfig-export-block.xml
+  register: output
+  ignore_errors: true
+
+    #7zip
+- name: Create directory 7zip
+  ansible.windows.win_file:
+    path: C:\7zip
+    state: directory
+
+- name : Download 7zip from master
+  win_copy : 
+    src: ~/Tools/7zip/7zipWin.exe
+    dest: C:\7zip\7zip.exe
+
+- name: Install 7zip
+  win_command: C:\7zip\7zip.exe /S
+
+  #chrome
+
+- name: Download chrome shell
+  win_shell: '$LocalTempDir = $env:TEMP; $ChromeInstaller = "ChromeInstaller.exe"; (new-object System.Net.WebClient).DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", "$LocalTempDir\$ChromeInstaller"); & "$LocalTempDir\$ChromeInstaller" /silent /install; $Process2Monitor = "ChromeInstaller"; Do { $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name; If ($ProcessesFound) { "Still running: $($ProcessesFound -join ", ")" | Write-Host; Start-Sleep -Seconds 2 } else { rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose } } Until (!$ProcessesFound)'
+  ignore_errors: true
+
+- name: Start scheduled Task
+  win_shell: Start-ScheduledTask -TaskName "Apply net conf"
