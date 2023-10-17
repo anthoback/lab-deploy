@@ -16,8 +16,18 @@
 - name: Copy scripts to c:\vagrant
   win_shell: Copy-Item -Recurse c:\lab-deploy\Vagrant c:\vagrant
 
+- name: Download Debug script from master
+  win_copy :
+   src: ~/DetectionLab/Vagrant/scripts/provision2012R2.ps1
+   dest: C:\vagrant\scripts
+
+- name: Download Debug script from master part 2
+  win_copy :
+   src: ~/DetectionLab/Vagrant/scripts/create-domain2012R2.ps1
+   dest: C:\vagrant\scripts
+
 - name: Create the Domain
-  win_shell: .\\provision.ps1 -ip <HostOnlyIP>
+  win_shell: .\\provision2012R2.ps1 -ip <HostOnlyIP>
   args:
     chdir: 'c:\vagrant\scripts'
   register: domain_creation
