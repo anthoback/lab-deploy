@@ -3,9 +3,11 @@
 TYPES = {
     # [nom, fichier sample terraform, fichier sample ansible]
     "win10": ["terraform/win10Sample.tf", "../Vagrant/resources/guacamole/win10Sample.xml"],
-    "dc": ["terraform/dcSample.tf", "../Vagrant/resources/guacamole/dcSample.xml"],
-    "winser2016": ["terraform/winser2016Sample.tf", "../Vagrant/resources/guacamole/winser2016Sample.xml"],
+    "dc2016": ["terraform/dc2016Sample.tf", "../Vagrant/resources/guacamole/dc2016Sample.xml"],
+    "win2016": ["terraform/win2016Sample.tf", "../Vagrant/resources/guacamole/win2016Sample.xml"],
+    "winser16": ["terraform/winser16Sample.tf", "../Vagrant/resources/guacamole/winser16Sample.xml"],
     "ubuntu": ["terraform/linuxSample.tf", "../Vagrant/resources/guacamole/ubuntuSample.xml"],
+    "ubuntuServ22": ["terraform/ubuntuServ22Sample.tf", "../Vagrant/resources/guacamole/ubuntuServ22Sample.xml"],
     "ubuntuDsk": ["terraform/ubuntuDskSample.tf", "../Vagrant/resources/guacamole/ubuntuDskSample.xml"],
     "win7": ["terraform/win7Sample.tf", "../Vagrant/resources/guacamole/win7Sample.xml"],
     "kali": ["terraform/kaliSample.tf", "../Vagrant/resources/guacamole/kaliSample.xml"],
@@ -13,15 +15,25 @@ TYPES = {
     "centos7": ["terraform/centos7.tf", "../Vagrant/resources/guacamole/centos7Sample.xml"],
     "debian11": ["terraform/debian11.tf", "../Vagrant/resources/guacamole/debian11Sample.xml"],
     "centos9": ["terraform/centos9.tf", "../Vagrant/resources/guacamole/centos9Sample.xml"],
-    "win11": ["terraform/win11Sample.tf", "../Vagrant/resources/guacamole/win11Sample.xml"], 
+    "win11": ["terraform/win11Sample.tf", "../Vagrant/resources/guacamole/win11Sample.xml"],
+    "win2019": ["terraform/win2019Sample.tf", "../Vagrant/resources/guacamole/win2019Sample.xml"],
+    "dc2019": ["terraform/win2019Sample.tf", "../Vagrant/resources/guacamole/win2019Sample.xml"],
+    "win2022": ["terraform/win2022Sample.tf", "../Vagrant/resources/guacamole/win2022Sample.xml"],
+    "dc2022": ["terraform/win2022Sample.tf", "../Vagrant/resources/guacamole/win2022Sample.xml"],
+    "win2012": ["terraform/win2012Sample.tf", "../Vagrant/resources/guacamole/win2012Sample.xml"],
+    "dc2012": ["terraform/win2012Sample.tf", "../Vagrant/resources/guacamole/win2012Sample.xml"],
+    "win2008": ["terraform/win2008Sample.tf", "../Vagrant/resources/guacamole/win2008Sample.xml"],
+    "dc2008": ["terraform/win2008Sample.tf", "../Vagrant/resources/guacamole/win2008Sample.xml"],
 }
 
 ROLES = {# chaque role correspond à une fonctionnalité
 
     #On retrouve les types
     "ubuntu": ["ubuntuServerSample.yml"],
-    "dc": ["dcSample.yml"],
-    "winser2016": ["winser2016Sample.yml"],
+    "ubuntuServ22": ["ubuntuServer22Sample.yml"],
+    "dc2016": ["dc2016Sample.yml"],
+    "win2016": ["win2016Sample.yml"],
+    "winser16": ["winser16Sample.yml"],
     "win10": ["win10Sample.yml"],
     "win7": ["win7Sample.yml"],
     "ubuntuDsk": ["ubuntuDskSample.yml"],
@@ -31,20 +43,35 @@ ROLES = {# chaque role correspond à une fonctionnalité
     "debian11": ["debian11Sample.yml"],
     "centos9": ["centos9Sample.yml"],
     "win11": ["win11Sample.yml"],
+    "win2019": ["win2019Sample.yml"],
+    "dc2019": ["dc2019Sample.yml"],
+    "win2022": ["win2022Sample.yml"],
+    "dc2022": ["dc2022Sample.yml"],
+    "win2012": ["win2012Sample.yml"],
+    "dc2012": ["dc2012Sample.yml"],
+    "win2008": ["win2008Sample.yml"],
+    "dc2008": ["dc2008Sample.yml"],
 
     # Fonctionnalités liées à l'AD
     "joinDomain": ["joinDomainSample.yml"],
     "joinADUbuntu": ["joinADUbuntu.yml"],
     "createDomain": ["createDomainSample.yml"],
+    "exchange": ["exchangeSample.yml"],
     "honeyaccount": [""],
     "badblood": [""],
+    "createDomain2012": ["createDomain2012Sample.yml"],
+    "createDomain2008": ["createDomain2008Sample.yml"],
 
     # Fonctionnalités
     "guacamole": [""],
     "cybereasonWin": [""],
     "sentinelOneWin": [""],
+    "crowdstrikeWin": [""],
     "harfangWin": [""],
+    "mdeWin10": [""],
+    "mdeWinser16": [""],
     "cybereasonUbuntu": [""],
+    "crowdstrikeUbuntu": [""],
     "sentinelOneUbuntu": [""],
     "harfangUbuntu": [""],
     "guacamoleActualise": [""],
@@ -55,5 +82,6 @@ ROLES = {# chaque role correspond à une fonctionnalité
     "vsCodeWin": [""],
     "notepadWin": [""],
     "processExpWin": [""],
-    "winlogbeat": [""]
+    "winlogbeat": [""],
+    "custom": [""]
 }
