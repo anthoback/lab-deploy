@@ -5,9 +5,6 @@
   args:
     chdir: C:\Windows\System32\
 
-- name: Reboot
-  win_reboot:
-
 - name: Hostname -> <name>
   win_hostname:
     name: <name>
@@ -17,9 +14,13 @@
 
 - name: Set HostOnly IP Address
   win_command: netsh int ip set address name="Connexion au réseau local 2" static <HostOnlyIP> 255.255.255.0 <gateway>
- 
+  async: 120
+  poll: 0
+
 - name: Set DNS
   win_command: netsh interface ip set dns name="Connexion au réseau local 2" static <gateway> primary
+  async: 120
+  poll: 0
 
 - name : Download Installer from master
   win_copy : 
@@ -31,12 +32,14 @@
   args:
     chdir: 'c:\'
   register: git
-
-- debug: msg="{{ git.stdout }}"
+  async: 240
+  poll: 0
 
 - name: "Set the TimeZone"
   win_timezone:
     timezone: "Romance Standard Time"
+  async: 120
+  poll: 0
 
 #Sysmon
 
@@ -60,7 +63,9 @@
   win_shell: C:\sysmon\Sysmon64.exe -accepteula -i C:\sysmon\sysmonconfig-export-block.xml
   register: output
   ignore_errors: true
-
+  async: 120
+  poll: 0
+  
     #7zip
 - name: Create directory 7zip
   ansible.windows.win_file:

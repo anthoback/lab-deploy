@@ -15,6 +15,7 @@
     ansible_become_method: runas
     ansible_become_user: WINDOMAIN\vagrantAdmin
     ansible_become_password: vagrant
+  ignore_errors: true
 
 - name: Executing SharpHound
   win_shell: .\\SharpHound.exe
@@ -25,4 +26,4 @@
     ansible_become_method: runas
     ansible_become_user: WINDOMAIN\vagrantAdmin
     ansible_become_password: vagrant
-
+  ignore_errors: true

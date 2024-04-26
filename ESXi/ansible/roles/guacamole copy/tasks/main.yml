@@ -42,16 +42,3 @@
     systemctl start tomcat9
     echo "[$(date +%H:%M:%S)]: Guacamole installation complete!"
   register: install_guacamole
-
-- name : copy index
-  become : true
-  copy : 
-    src: ~/Tools/guac/index.jsp
-    dest: /var/lib/tomcat9/webapps/ROOT/index.jsp
-
-- name: redirect
-  become: yes
-  shell: |
-    mv /var/lib/tomcat9/webapps/ROOT/index.html /var/lib/tomcat9/webapps/ROOT/index.html.bak
-    sudo systemctl restart guacd
-    sudo systemctl restart tomcat9

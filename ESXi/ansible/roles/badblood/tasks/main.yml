@@ -2,6 +2,10 @@
   win_copy : 
     src: ~/Tools/BadBlood/
     dest: C:\ 
-
+  ignore_errors: true
+  
 - name: Executing badblood
-  win_shell: powershell.exe -executionpolicy bypass -noninteractive -File "C:\badblood\Invoke-BadBlood.ps1"
+  win_shell: .\\Invoke-BadBlood.ps1
+  args:
+    chdir: 'C:\badblood'
+  ignore_errors: true

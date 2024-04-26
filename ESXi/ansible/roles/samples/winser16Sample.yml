@@ -17,15 +17,15 @@
   async: 120
   poll: 0
 
-- name: Set HostOnly DNS Address
+- name: Set DNS Address
   win_shell: "$adapter = (get-netadapter | where {$_.MacAddress -eq '<MACAdressHostOnly>'}).Name; Set-DnsClientServerAddress -InterfaceAlias $adapter -ServerAddresses <gateway>,<gateway>"
   async: 120
   poll: 0
-
-- name : Download Installer from master
-  win_copy : 
-    src: ~/Tools/gitWin64.exe
-    dest: C:\gitWin64.exe
+  
+- name: Download git installer from master
+  win_get_url:
+    url: http://192.168.1.117/gitWin64.exe
+    dest: 'C:\gitWin64.exe'
 
 - name: Install git
   win_shell: .\gitWin64.exe /SILENT 
@@ -85,4 +85,3 @@
 - name: Download chrome shell
   win_shell: '$LocalTempDir = $env:TEMP; $ChromeInstaller = "ChromeInstaller.exe"; (new-object System.Net.WebClient).DownloadFile("http://dl.google.com/chrome/install/375.126/chrome_installer.exe", "$LocalTempDir\$ChromeInstaller"); & "$LocalTempDir\$ChromeInstaller" /silent /install; $Process2Monitor = "ChromeInstaller"; Do { $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name; If ($ProcessesFound) { "Still running: $($ProcessesFound -join ", ")" | Write-Host; Start-Sleep -Seconds 2 } else { rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose } } Until (!$ProcessesFound)'
   ignore_errors: true
-

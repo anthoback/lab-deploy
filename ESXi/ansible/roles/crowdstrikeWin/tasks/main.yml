@@ -1,0 +1,13 @@
+- name : Download Crowdstrike installer from master
+  win_copy : 
+    src: ~/Tools/Crowdstrike/WindowsSensor.LionLanner.exe
+    dest: C:\WindowsSensor.exe
+
+- name: Install Crowdstrike Agent
+  win_shell: "C:\\WindowsSensor.exe /install /quiet CID={{ ansible_token_crowdstrike }} "
+  register: output
+  ignore_errors: true
+
+- debug: msg="{{ output.stdout }}"
+- debug: msg="{{ output.stderr }}"
+

@@ -1,6 +1,6 @@
 - name : Download winlogbeat config installer from master
   win_copy : 
-    src: ~/Tools/winlogbeat/winlogbeat_withoutfilters.yml
+    src: ~/Tools/winlogbeat/winlogbeat_default.yml
     dest: C:\Winlogbeat\winlogbeat.yml
 
 - name: Reboot

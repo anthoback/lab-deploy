@@ -1,0 +1,14 @@
+- name : Download MDE installer from master
+  win_copy : 
+    src: ~/Tools/MDE/WDATPOnboardingWin10-11/WindowsDefenderATPLocalOnboardingScript.cmd
+    dest: C:\WindowsDefenderATPLocalOnboardingScript.cmd
+
+- name: Install MDE Agent
+  win_shell: "C:\\WindowsDefenderATPLocalOnboardingScript.cmd  -y"
+  register: output
+  ignore_errors: true
+
+
+- debug: msg="{{ output.stdout }}"
+- debug: msg="{{ output.stderr }}"
+

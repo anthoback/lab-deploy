@@ -1,0 +1,24 @@
+- name : copy falcon-sensor_7.01.0-15604_amd64.deb
+  become : true
+  copy : 
+    src: ~/Tools/Crowdstrike/falcon-sensor_7.01.0-15604_amd64.deb
+    dest: /etc/falcon-sensor.deb
+
+
+
+- name: Install Crowdstrike agent on ubuntu
+  args: 
+    executable: /bin/bash
+  become: yes
+  shell: |
+    sudo apt install gdb -y
+    sudo dpkg -i /etc/falcon-sensor.deb
+    sudo /opt/CrowdStrike/falconctl -s --cid={{ ansible_token_crowdstrike }}
+    sudo systemctl start falcon-sensor
+  register: cbrs
+
+
+
+- debug: msg="{{ output.stdout }}"
+- debug: msg="{{ output.stderr }}"
+
