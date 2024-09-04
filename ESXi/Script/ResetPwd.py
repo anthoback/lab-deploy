@@ -14,6 +14,7 @@ def main():
 
     lockfile()
 
+    #renvoie au fichier de consigne d'utilisation
     if len(sys.argv) == 2 and (sys.argv[1] == "-h" or sys.argv[1] == "help" ):
         fichier = open("Resources/help/helpResetPwd.txt", 'r')
         print(fichier.read())
@@ -76,7 +77,7 @@ def main():
             fichier.write("    - "+ "guacamoleActualise" + "\n")
             fichier.write("  tags: " + ordi.name + "\n\n")
     fichier.close()
-    print("Running ansible...")
+    input("Running ansible...")
     # Lance les scripts ansible créés ordinateur par ordinateur
     for ordi in l.computers:
         os.chdir("../ansible")
@@ -85,8 +86,6 @@ def main():
     time.sleep(5)
     print("Done ! Cleaning...")
     l.cleanAnsibleFiles()
-    print("Disconnecting management network...")
-    l.disconnectVMFromManagementNetwork()
     print("Taking snapshots...")
     l.takeSnapshotordi(guacaComp)
     print("Saving lab...")

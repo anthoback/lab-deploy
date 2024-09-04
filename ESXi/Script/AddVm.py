@@ -182,10 +182,6 @@ def main():
             fichier.write("  tags: " + ordi.name + "\n\n")
     fichier.close()
     
-    
-    
-    
-    
     print("Running ansible...")
     # Lance les scripts ansible créés ordinateur par ordinateur
     for ordi in l.computers:

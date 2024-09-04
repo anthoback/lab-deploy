@@ -36,11 +36,29 @@ class lab:
             lab=self))
         self.IPcounter += 1
 
+########################################################################################################################################## 
+########################################################################################################################################## 
+########################################################################################################################################## 
+########################################################################################################################################## 
+########################################################################################################################################## 
+
+    def removeComputer(self, labname:str):
+        # Ajoute un objet ordinateur au Lab mais ne crée pas les fichiers de conf    
+        for ordi in self.computers:
+            if ordi.name == labname:
+                self.computers.remove(ordi)
+
+########################################################################################################################################## 
+########################################################################################################################################## 
+########################################################################################################################################## 
+########################################################################################################################################## 
+########################################################################################################################################## 
+
     def getDNSIP(self):
         # Utile pour remplir certains fichiers de configuration ansible
         for ordi in self.computers:
             for role in ordi.roles:
-                if role == "createDomain":
+                if role == "createDomain" or role == "createDomain2012" or role == "createDomain2008":
                     return ordi.IP.replace("\n", "")
         return "8.8.8.8"
 
@@ -208,10 +226,15 @@ class lab:
     def restoreSnapshot(self):
         #Will restore the snapshot took by takeSnapshot at the end of install
         #In fact it restore the first snapshot taken
+        guacaComp = self.name+"ubuntu0"
+
         for ordi in self.computers:
-            self.network.ESXiCmd("vim-cmd vmsvc/snapshot.revert "+ordi.ESXiID+" 1 0")
+            print(ordi.name)
+            if ordi.name != guacaComp:
+                self.network.ESXiCmd("vim-cmd vmsvc/snapshot.revert "+ordi.ESXiID+" 1 0")
         for ordi in self.computers:
-            self.network.ESXiCmd("vim-cmd vmsvc/power.on " + ordi.ESXiID)
+            if ordi.name != guacaComp:
+                self.network.ESXiCmd("vim-cmd vmsvc/power.on " + ordi.ESXiID)
 
     def save(self):
         # Save the self (lab) object so we can load it later
@@ -322,7 +345,8 @@ class ordinateur:
         self.ESXiID = 1500 # Va être changé quand il sera connu
         self.dhcpIP = "" # idem
         self.state = "dead"
-        self.name = lab.name + self.getType() + str(len(self.lab.computers))
+        #self.name = lab.name + self.getType() + str(len(self.lab.computers))
+        self.name = lab.name + self.getType() + str(self.lab.IPcounter-2)
 
     def getType(self):
         for role in self.roles:

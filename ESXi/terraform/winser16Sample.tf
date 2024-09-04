@@ -9,7 +9,8 @@ resource "esxi_guest" "<name>" {
   numvcpus           = "3"
   resource_pool_name = "/"
   power              = "on"
-  clone_from_vm = "WindowsServer2016"
+  clone_from_vm = "WinServ2016"
+  
   # This is the local network that will be used for 192.168.56.x addressing
   network_interfaces {
     virtual_network = var.hostonly_network

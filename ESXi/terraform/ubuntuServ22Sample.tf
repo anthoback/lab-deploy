@@ -2,14 +2,15 @@ resource "esxi_guest" "<name>" {
   guest_name = "<name>"
   disk_store = var.esxi_datastore
   guestos    = "ubuntu-64"
-
+  boot_firmware = "efi"
   boot_disk_type = "thin"
-
-  memsize            = "8192"
-  numvcpus           = "4"
+  
+  memsize            = "4096"
+  numvcpus           = "2"
   resource_pool_name = "/"
   power              = "on"
-  clone_from_vm = "UbuntuServ2004"
+  clone_from_vm = "UbuntuSer22"
+
 
   # <balise> 
   network_interfaces {

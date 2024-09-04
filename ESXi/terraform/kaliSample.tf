@@ -4,25 +4,11 @@ resource "esxi_guest" "<name>" {
 
   boot_disk_type = "thin"
 
-  memsize            = "4096"
+  memsize            = "3072"
   numvcpus           = "2"
   resource_pool_name = "/"
   power              = "on"
   clone_from_vm = "Cali"
-
-    provisioner "remote-exec" {
-    inline = [
-      "sudo ifup eth0 && echo 'eth0 up' || echo 'unable to bring eth0 interface up'",      
-      "sudo ifup eth1 && echo 'eth1 up' || echo 'unable to bring eth1 interface up'"
-    ]
-
-    connection {
-      host        = self.ip_address
-      type        = "ssh"
-      user        = "vagrant"
-      password    = "vagrant"
-    }
-  }
 
   # <balise> 
   network_interfaces {

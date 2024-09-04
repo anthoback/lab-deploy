@@ -5,7 +5,7 @@ resource "esxi_guest" "<name>" {
 
   boot_disk_type = "thin"
 
-  memsize            = "4096"
+  memsize            = "3072"
   numvcpus           = "2"
   resource_pool_name = "/"
   power              = "on"

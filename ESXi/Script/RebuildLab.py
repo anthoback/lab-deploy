@@ -10,6 +10,8 @@ load_dotenv()
 
 # Détruit tous les fichiers et recrée l'ensemble des VMs avec leurs roles
 def main():
+
+    #renvoie au fichier de consigne d'utilisation
     if len(sys.argv) == 2 and (sys.argv[1] == "-h" or sys.argv[1] == "help" ):
         fichier = open("Resources/help/helpRebuildLab.txt", 'r')
         print(fichier.read())

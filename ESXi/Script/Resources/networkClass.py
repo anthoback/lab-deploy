@@ -29,8 +29,8 @@ class network:
         fichier.close()
         for i in range(len(liste)):
             opts = liste[i].split(" ")
-            host_id = ''.join(filter(lambda i: i.isdigit(), opts[0]))
-            lab_id = ''.join(filter(lambda i: i.isdigit(), self.labname))
+            host_id = opts[0].replace("HostOnly", "")
+            lab_id = self.labname.replace("Lab", "")
             if opts[1] == "unused" and host_id == lab_id:
                 liste[i] = opts[0] + " used " + opts [2]
                 fichier = open("Resources/Networks.txt", 'w')
@@ -48,8 +48,8 @@ class network:
         fichier.close()
         for i in range(len(liste)):
             opts = liste[i].split(" ")
-            host_id = ''.join(filter(lambda i: i.isdigit(), opts[0]))
-            lab_id = ''.join(filter(lambda i: i.isdigit(), self.labname))
+            host_id = opts[0].replace("HostOnly", "")
+            lab_id = self.labname.replace("Lab", "")
             if host_id == lab_id:
                 self.IPmask = opts[2].replace("\n", "")
                 return opts[2].replace("\n", "")

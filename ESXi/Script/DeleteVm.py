@@ -1,17 +1,14 @@
+#### Pas opérationel
+import pickle
 import os 
-import shutil
-import time
 from Resources.samples import *
 from Resources.labClass import *
-import sys
 from dotenv import load_dotenv
-
-load_dotenv()
-
-#Permet d'ajouter un ou plusieurs roles sur une des VMs d'un LAB
+from openpyxl import load_workbook
+from Resources.Users import *
+import time
 
 def main():
-
     lockfile()
 
     #renvoie au fichier de consigne d'utilisation
@@ -44,57 +41,38 @@ def main():
             chaine += "\n - " + ordi.name 
         print(chaine)
         c = input("Please enter the name of the VM >> ")
-    
-    li =os.listdir("../Labs/" + l.name+"/")
-    ca=[x.split('.')[0] for x in li]    
-    notexist = True
-    while notexist :
-        for d in ca:
-            if c == d:    
-                notexist = False
-        if c =="" :
-            print("Aborting...")
-            shutil.rmtree("../Labs/" + l.name +"_add")
-            return None
-        elif notexist:
-            print("VM doesn't exist")
-            c = input("Please enter the name of the VM >> ")
-    
-    #Si il y a plus de 4 arguments chaque role correspondra à un role 
-    #si il n'y en a pas de renseigné ceeux-ci seront demandés 
-    if len(sys.argv) > 3 :
-        c2 = ""
-        for rol in range(3,len(sys.argv)) :
-            c2 += sys.argv[rol]
-            if rol != len(sys.argv)-1 :
-                c2 += " " 
-    else :
-        c2 = input("Please enter the name of the roles >> ")
 
-    rolenotexit = True
-    while rolenotexit :
-        ca2 = c2.split(" ")
-        for d in ca2:
-            if not d in ROLES:
-                print("Role "+d+" does not exist")
-                c2 = input("Please enter the name of the roles >> ")
-                break
-        else:
-            rolenotexit = False
+    l.removeComputer(c)
 
+    os.chdir("../Labs/"+l.name)
+    os.system("terraform destroy -target esxi_guest."+c)
+    os.system("rm "+c+".tf")
+    os.chdir("../../Script")
 
-    #On nettoie les fichiers
+# print("Running Terraform ...")
+#    os.chdir("../Labs/"+l.name)
+#    os.system("terraform init")
+#    os.system("terraform apply -auto-approve")
+#    os.chdir("../../Script")
+
+    # Crée les fichiers de configuration ansible à partir des samples dans ansible/roles/samples et ex nihilo
+    print("Creating ansible files...")
     l.cleanAnsibleFiles()
-
-    #On crée le fichier inventory.yml
+    # fichier de configuration de guacamole qui est téléversé sur le logger par ansible
+    l.buildGuacamoleConfigFile()
+    # On crée ex nihilo le fichier inventory.yml
     os.system("rm ../ansible/inventory.yml")
     fichier = open("../ansible/inventory.yml", 'a')
+    guacaComp=l.name+"ubuntu0"
     mask = l.network.getIPmask()
+
     for ordi in l.computers:
         id = os.popen("sshpass -p " + os.getenv('password')+ " ssh -o StrictHostKeyChecking=no " + os.getenv('user') + "@" + os.getenv('ESXi') + " " + "vim-cmd vmsvc/getallvms | grep \"" + ordi.name + "/" + ordi.name + ".vmx\" | awk '{print $1}' | awk '{$1=$1};1'").read().replace("\n", "")
         IP = os.popen("sshpass -p " + os.getenv('password')+ " ssh -o StrictHostKeyChecking=no " + os.getenv('user') + "@" + os.getenv('ESXi') + " " + "vim-cmd vmsvc/get.guest "+id+" | grep -m 1 '"+mask+"' | sed 's/[^0-9+.]*//g'").read().replace("\n", "")
         ordi.ESXiID = id
         ordi.dhcpIP = IP 
+
+    # on réunit les ordinateurs par type, car il existe un fichier group_vars par type
     for type in TYPES:
         ordis = l.getOrdiWithType(type)
         hosts= ""
@@ -107,45 +85,30 @@ def main():
     os.system("rm ../ansible/detectionlab.yml")
     fichier = open("../ansible/detectionlab.yml", 'a')
     fichier.write("---\n")
+
     for ordi in l.computers:
-        if c in ordi.name :
-            ordi.ansibleRoles = []
+        if ordi.name == guacaComp:
             fichier.write("- hosts: " + ordi.dhcpIP)
             fichier.write("\n  roles:\n")
-            for role in ca2:
-                if ROLES[role][0] == "":
-                    ordi.ansibleRoles.append(role)
-                else:
-                    nom = ordi.name + role
-                    os.system("mkdir ../ansible/roles/" + nom)
-                    os.system("mkdir ../ansible/roles/"+nom+"/tasks")
-                    importConfigFile("../ansible/roles/samples/"+ROLES[role][0], "../ansible/roles/"+nom+"/tasks/main.yml", {
-                        "name":ordi.name,
-                        "HostOnlyIP": ordi.IP,
-                        "DNSServer": l.getDNSIP(),
-                        "MACAdressHostOnly": ordi.macAddressHostOnly.replace(":", "-"),
-                        "gateway":ordi.lab.network.IPmask+"1",
-                        "DCIP": l.getDNSIP()
-                    })
-                    ordi.ansibleRoles.append(nom)
-            for d in ordi.ansibleRoles:
-                fichier.write("    - "+ d + "\n")
+            ordi.buildAnsibleTasks(l.getDNSIP()) # dans cette fonction sont crée les roles à partir des samples
+            fichier.write("    - "+ "guacamoleActualise" + "\n")
             fichier.write("  tags: " + ordi.name + "\n\n")
     fichier.close()
-    
-    # Lance les scripts ansible créés ordinateur par ordinateur
+
     print("Running ansible...")
+    # Lance les scripts ansible créés ordinateur par ordinateur
     for ordi in l.computers:
         os.chdir("../ansible")
         os.system("ansible-playbook detectionlab.yml --tags \""+ordi.name+"\" --timeout 180")
         os.chdir("../Script")
-        ordi.getType()
     time.sleep(5)
-    
-    #Execution des fonctions de clean et de sauvegarde
-    l.cleanAnsibleFiles()
     print("Done ! Cleaning...")
-    l.takeSnapshotordi(c)
+    l.cleanAnsibleFiles()
+    print("Disconnecting management network...")
+    l.disconnectVMFromManagementNetwork()
+    print("Taking snapshots...")
+
+    l.takeSnapshotordi(guacaComp)
     print("Saving lab...")
     l.save()
     os.system("rm ../lock")

@@ -1,16 +1,28 @@
 resource "esxi_guest" "<name>" {
   guest_name = "<name>"
   disk_store = var.esxi_datastore
-  guestos    = "ubuntu-64"
 
   boot_disk_type = "thin"
 
-  memsize            = "8192"
-  numvcpus           = "4"
+  memsize            = "4096"
+  numvcpus           = "2"
   resource_pool_name = "/"
   power              = "on"
-  clone_from_vm = "UbuntuServ2004"
+  clone_from_vm = "Metasploitable2-Linux"
 
+    provisioner "remote-exec" {
+    inline = [
+      "sudo ip link set dev eth0 up",
+      "sudo ip link set dev eth1 up" 
+    ]
+
+    connection {
+      host        = self.ip_address
+      type        = "ssh"
+      user        = "vagrant"
+      password    = "vagrant"
+    }
+  }
   # <balise> 
   network_interfaces {
     virtual_network = var.vm_network

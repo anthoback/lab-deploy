@@ -1,5 +1,4 @@
 import os 
-
 import time
 from Resources.samples import *
 from Resources.labClass import *
@@ -7,9 +6,9 @@ from Resources.Users import *
 import sys
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
-#Permet d'ajouter des VM à un LAB
 
 def main():
 
@@ -17,7 +16,7 @@ def main():
 
     #renvoie au fichier de consigne d'utilisation
     if len(sys.argv) == 2 and (sys.argv[1] == "-h" or sys.argv[1] == "help" ):
-        fichier = open("Resources/help/helpAddUsers.txt", 'r')
+        fichier = open("Resources/help/helpResetPwd.txt", 'r')
         print(fichier.read())
         fichier.close()
         sys.exit()
@@ -35,11 +34,11 @@ def main():
         print("Failed ! Do your lab exists ? ")
         sys.exit()
     
-    if not ask("Use the template for users"):
-        UsersCreationNoFile(l.name)
-    else :
-        UsersCreation("Template_Users.xlsx",l.name)
-     # Crée les fichiers de configuration ansible à partir des samples dans ansible/roles/samples et ex nihilo
+    
+    id = input("Please enter the user's ID : ")
+    deleteUsersLab(id, l.name)
+    
+    # Crée les fichiers de configuration ansible à partir des samples dans ansible/roles/samples et ex nihilo
     print("Creating ansible files...")
     l.cleanAnsibleFiles()
     # fichier de configuration de guacamole qui est téléversé sur le logger par ansible
@@ -49,7 +48,6 @@ def main():
     fichier = open("../ansible/inventory.yml", 'a')
     guacaComp=l.name+"ubuntu0"
     mask = l.network.getIPmask()
-    
     for ordi in l.computers:
         id = os.popen("sshpass -p " + os.getenv('password')+ " ssh -o StrictHostKeyChecking=no " + os.getenv('user') + "@" + os.getenv('ESXi') + " " + "vim-cmd vmsvc/getallvms | grep \"" + ordi.name + "/" + ordi.name + ".vmx\" | awk '{print $1}' | awk '{$1=$1};1'").read().replace("\n", "")
         IP = os.popen("sshpass -p " + os.getenv('password')+ " ssh -o StrictHostKeyChecking=no " + os.getenv('user') + "@" + os.getenv('ESXi') + " " + "vim-cmd vmsvc/get.guest "+id+" | grep -m 1 '"+mask+"' | sed 's/[^0-9+.]*//g'").read().replace("\n", "")
@@ -61,8 +59,7 @@ def main():
         ordis = l.getOrdiWithType(type)
         hosts= ""
         for ordi in ordis:
-            if len(ordi.dhcpIP) != 0 :
-                hosts += "    "+ordi.dhcpIP+":\n"
+            hosts += "    "+ordi.dhcpIP+":\n"
         fichier.write(type + ":\n  hosts:\n" + hosts + '\n')
     fichier.close()
 
@@ -80,7 +77,7 @@ def main():
             fichier.write("    - "+ "guacamoleActualise" + "\n")
             fichier.write("  tags: " + ordi.name + "\n\n")
     fichier.close()
-    input("Running ansible...")
+    print("Running ansible...")
     # Lance les scripts ansible créés ordinateur par ordinateur
     for ordi in l.computers:
         os.chdir("../ansible")
@@ -89,6 +86,8 @@ def main():
     time.sleep(5)
     print("Done ! Cleaning...")
     l.cleanAnsibleFiles()
+    print("Disconnecting management network...")
+    l.disconnectVMFromManagementNetwork()
     print("Taking snapshots...")
     l.takeSnapshotordi(guacaComp)
     print("Saving lab...")

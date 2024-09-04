@@ -4,6 +4,7 @@ from Resources.samples import *
 from dotenv import load_dotenv
 from openpyxl import load_workbook
 from os import path
+import os
 import secrets
 import string
 import hashlib
@@ -35,8 +36,21 @@ def deleteAllUsersLab(labName) :
                         indent=4,  
                         separators=(',',': '))
 
-def UserModifPwd(id, labname) :
+def deleteUsersLab(id, labName) :
+    filename = "Resources/users.json"
+    listObj = []
+    with open(filename) as fp:
+        json_object = json.load(fp)    
+    for dict in json_object:
+        if dict['Lab'] != labName or dict['ID'] != id:
+            listObj.append(dict)
     
+    with open(filename, 'w') as json_file:
+        json.dump(listObj, json_file, 
+                        indent=4,  
+                        separators=(',',': '))
+
+def UserModifPwd(id, labname) :
     filename = "Resources/users.json"
     f= open("Resources/Pwd/pwd"+ id +".txt","w+")
     listObj = []
@@ -47,7 +61,7 @@ def UserModifPwd(id, labname) :
             pwd = genPW()
             result = hashlib.md5(pwd.encode())
             listObj.append({
-            "Lab": dict["labname"],
+            "Lab": dict['Lab'],
             "ID": id,
             "PWD": result.hexdigest()
             })
@@ -76,12 +90,18 @@ def UsersCreation(file, labName) :
         raise Exception("File not found")
     with open(filename) as fp:
         listObj = json.load(fp)
-
+    result = hashlib.md5(os.getenv('pwdadmin').encode())
+    f.write("ID = " +os.getenv('adminLab') + " / Password = " + os.getenv('pwdadmin')  + " / MD5 = " +result.hexdigest()+"\n")
+    listObj.append({
+        "Lab": labName,
+        "ID": os.getenv('adminLab'),
+        "PWD": result.hexdigest()
+    })
     ligne = 1
     while ws.cell(row=ligne, column= 1).value != None and ws.cell(row=ligne, column= 1).value != "" :
         if ws.cell(row=ligne, column= 2).value == None or ws.cell(row=ligne, column= 2).value == "" : 
             ws.cell(row=ligne, column= 2).value =  genPW()
-
+        print(ws.cell(row=ligne, column= 2).value)
         result = hashlib.md5(ws.cell(row=ligne, column= 2).value.encode())
         # printing the equivalent hexadecimal value.
         f.write("ID = " +ws.cell(row=ligne, column= 1).value + " / Password = " + ws.cell(row=ligne, column= 2).value  + " / MD5 = " +result.hexdigest()+"\n")
@@ -104,15 +124,12 @@ def UsersCreationNoFile(labName) :
     
     filename = "Resources/users.json"
     listObj = []
-    
     f= open("Resources/Pwd/pwdlist"+labName+".txt","w+")
-    
     if path.isfile(filename) is False:
         raise Exception("File not found")
     with open(filename) as fp:
         listObj = json.load(fp)
 
-    
     while True:
         c = input("add user>> ")
         if c.replace(" ", "") == "":

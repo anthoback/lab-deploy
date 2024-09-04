@@ -11,6 +11,7 @@ def main():
     
     lockfile()
 
+    #renvoie au fichier de consigne d'utilisation
     if len(sys.argv) == 2 and (sys.argv[1] == "-h" or sys.argv[1] == "help" ):
         fichier = open("Resources/help/helpDestroyLab.txt", 'r')
         print(fichier.read())

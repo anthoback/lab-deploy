@@ -3,6 +3,7 @@
 TYPES = {
     # [nom, fichier sample terraform, fichier sample ansible]
     "win10": ["terraform/win10Sample.tf", "../Vagrant/resources/guacamole/win10Sample.xml"],
+    "win1020H2": ["terraform/win1020H2Sample.tf", "../Vagrant/resources/guacamole/win10Sample.xml"],
     "dc2016": ["terraform/dc2016Sample.tf", "../Vagrant/resources/guacamole/dc2016Sample.xml"],
     "win2016": ["terraform/win2016Sample.tf", "../Vagrant/resources/guacamole/win2016Sample.xml"],
     "winser16": ["terraform/winser16Sample.tf", "../Vagrant/resources/guacamole/winser16Sample.xml"],
@@ -19,11 +20,14 @@ TYPES = {
     "win2019": ["terraform/win2019Sample.tf", "../Vagrant/resources/guacamole/win2019Sample.xml"],
     "dc2019": ["terraform/win2019Sample.tf", "../Vagrant/resources/guacamole/win2019Sample.xml"],
     "win2022": ["terraform/win2022Sample.tf", "../Vagrant/resources/guacamole/win2022Sample.xml"],
+    "win22core": ["terraform/win22coreSample.tf", "../Vagrant/resources/guacamole/win2022Sample.xml"],
+    "dc22core": ["terraform/win22coreSample.tf", "../Vagrant/resources/guacamole/win2022Sample.xml"],
     "dc2022": ["terraform/win2022Sample.tf", "../Vagrant/resources/guacamole/win2022Sample.xml"],
     "win2012": ["terraform/win2012Sample.tf", "../Vagrant/resources/guacamole/win2012Sample.xml"],
     "dc2012": ["terraform/win2012Sample.tf", "../Vagrant/resources/guacamole/win2012Sample.xml"],
     "win2008": ["terraform/win2008Sample.tf", "../Vagrant/resources/guacamole/win2008Sample.xml"],
     "dc2008": ["terraform/win2008Sample.tf", "../Vagrant/resources/guacamole/win2008Sample.xml"],
+    "meta2ubuntu": ["terraform/meta2ubuntu.tf", "../Vagrant/resources/guacamole/meta2ubuntu.xml"],
 }
 
 ROLES = {# chaque role correspond à une fonctionnalité
@@ -35,6 +39,7 @@ ROLES = {# chaque role correspond à une fonctionnalité
     "win2016": ["win2016Sample.yml"],
     "winser16": ["winser16Sample.yml"],
     "win10": ["win10Sample.yml"],
+    "win1020H2": ["win1020H2Sample.yml"],
     "win7": ["win7Sample.yml"],
     "ubuntuDsk": ["ubuntuDskSample.yml"],
     "kali": ["kaliSample.yml"],
@@ -47,10 +52,13 @@ ROLES = {# chaque role correspond à une fonctionnalité
     "dc2019": ["dc2019Sample.yml"],
     "win2022": ["win2022Sample.yml"],
     "dc2022": ["dc2022Sample.yml"],
+    "win22core": ["win22coreSample.yml"],
+    "dc22core": ["dc22coreSample.yml"],
     "win2012": ["win2012Sample.yml"],
     "dc2012": ["dc2012Sample.yml"],
     "win2008": ["win2008Sample.yml"],
     "dc2008": ["dc2008Sample.yml"],
+    "meta2ubuntu": ["meta2ubuntuSample.yml"],
 
     # Fonctionnalités liées à l'AD
     "joinDomain": ["joinDomainSample.yml"],
@@ -59,6 +67,7 @@ ROLES = {# chaque role correspond à une fonctionnalité
     "exchange": ["exchangeSample.yml"],
     "honeyaccount": [""],
     "badblood": [""],
+    "sharphound": [""],
     "createDomain2012": ["createDomain2012Sample.yml"],
     "createDomain2008": ["createDomain2008Sample.yml"],
 

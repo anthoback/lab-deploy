@@ -64,7 +64,7 @@ def main():
             print("Command not found !")
         
         while l != None:
-            print("A lab is loaded. (list, reset, removesnap, destroy, add, addrole,addusers, unload, rebuild, shutdown, power, show, help, exit)")
+            print("A lab is loaded. (list, reset, removesnap, destroy, add, del, addrole, addusers, delusers, rstpwd, unload, rebuild, shutdown, power, show, help, exit)")
             c = input(" >> ").lower()
 
             if c == "list":
@@ -96,10 +96,16 @@ def main():
                 os.system("python3 RebuildLab.py "+ l.name)
             elif c =="add":
                 os.system("python3 AddVm.py "+ l.name) 
+            elif c =="del":
+                os.system("python3 DeleteVm.py "+ l.name) 
             elif c == "addrole":
                 os.system("python3 AddRole.py "+ l.name)
             elif c == "addusers":
                 os.system("python3 AddUsers.py "+ l.name)
+            elif c == "delusers":
+                os.system("python3 DeleteUsersLab.py "+ l.name)
+            elif c == "rstpwd":
+                os.system("python3 ResetPwd.py "+ l.name)
             else:
                 print("Command not found !")
 

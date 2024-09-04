@@ -11,19 +11,6 @@ resource "esxi_guest" "<name>" {
   power              = "on"
   clone_from_vm = "UbuntuDesktop2004"
 
-    provisioner "remote-exec" {
-    inline = [
-      "sudo ip link set dev eth0 up",
-      "sudo ip link set dev eth1 up" 
-    ]
-
-    connection {
-      host        = self.ip_address
-      type        = "ssh"
-      user        = "vagrant"
-      password    = "vagrant"
-    }
-  }
   # <balise> 
   network_interfaces {
     virtual_network = var.vm_network
